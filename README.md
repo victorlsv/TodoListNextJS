@@ -1,59 +1,62 @@
-Gerenciador de Tarefas TO DO LIST - IM
+# Gerenciador de Tarefas TO DO LIST - IM
 
 Projeto desenvolvido como teste técnico, consistindo em uma aplicação web para gerenciamento de tarefas (CRUD), com foco em organização de código, usabilidade e boas práticas em React.
 
- *Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
-Next.js (App Router)
+- **Next.js** (App Router)
+- **React**
+- **Chakra UI**
+- **TypeScript**
+- **LocalStorage** para persistência dos dados
 
-React
+## Funcionalidades
 
-Chakra UI
+- Criar, editar, excluir e concluir tarefas
+- Listagem de tarefas
+- Filtros por status e prioridade
+- Busca por título ou descrição
+- Persistência dos dados no navegador
+- Interface responsiva
+- Modais e feedback visual com Chakra UI
 
-TypeScript
+## Instalação
 
-LocalStorage para persistência dos dados
+1. Instale as dependências do projeto:
+   ```bash
+   npm install
+   ```
 
- *Funcionalidades
+2. Instale o Chakra UI:
+   ```bash
+   npm install @chakra-ui/react @emotion/react @emotion/styled framer-motion
+   ```
 
-Criar, editar, excluir e concluir tarefas
+3. Instale os ícones do Chakra UI:
+   ```bash
+   npm install @chakra-ui/icons
+   ```
 
-Listagem de tarefas
+## Execução
 
-Filtros por status e prioridade
+1. Execute o projeto:
+   ```bash
+   npm run dev
+   ```
 
-Busca por título ou descrição
+2. Acesse no navegador:
+   [http://localhost:3000](http://localhost:3000)
 
-Persistência dos dados no navegador
+## Estilização
 
-Interface responsiva
+A estilização foi feita utilizando **Chakra UI**, diretamente nos componentes, sem uso de arquivos CSS separados, garantindo consistência visual, responsividade e facilidade de manutenção.
 
-Modais e feedback visual com Chakra UI
+## Observações
 
-Instale as dependências do projeto
-npm install
+- Os dados são armazenados localmente utilizando **localStorage**.
+- O foco foi entregar uma solução funcional, organizada e de fácil entendimento.
 
-Instale o Chakra UI
-npm install @chakra-ui/react @emotion/react @emotion/styled framer-motion
+---
 
-Instale os ícones do Chakra UI
-npm install @chakra-ui/icons
-
-Execute o projeto
-npm run dev
-
-Acesse no navegador
-http://localhost:3000
-
-
-Estilização
-
-A estilização foi feita utilizando Chakra UI, diretamente nos componentes, sem uso de arquivos CSS separados, garantindo consistência visual, responsividade e facilidade de manutenção.
-
-Observações
-
-Os dados são armazenados localmente utilizando localStorage
-O foco foi entregar uma solução funcional, organizada e de fácil entendimento
-
-Desenvolvido por: Victor Lara Silva
-Ano: 2025
+**Desenvolvido por:** Victor Lara Silva  
+**Ano:** 2025
