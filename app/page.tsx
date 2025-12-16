@@ -1,66 +1,248 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
 
-export default function Home() {
+import { useEffect, useRef, useState } from 'react'
+import {
+  Box,
+  Button,
+  Container,
+  VStack,
+  useDisclosure,
+  useToast,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay
+} from '@chakra-ui/react'
+import { AddIcon } from '@chakra-ui/icons'
+
+import { Header } from './components/Header'
+import { Filters } from './components/Filters'
+import { TaskList } from './components/TaskList'
+import { TaskModal } from './components/TaskModal'
+import { Footer } from './components/Footer'
+
+import { Tarefa } from '../tipos/tarefa'
+
+export default function PaginaPrincipal() {
+  const [tarefas, setTarefas] = useState<Tarefa[]>([])
+  const [busca, setBusca] = useState('')
+  const [filtroStatus, setFiltroStatus] = useState('todas')
+  const [filtroPrioridade, setFiltroPrioridade] = useState('todas')
+  const [tarefaEditando, setTarefaEditando] = useState<Tarefa | null>(null)
+
+  const [tarefaParaExcluir, setTarefaParaExcluir] = useState<string | null>(null)
+  const cancelRef = useRef<HTMLButtonElement>(null)
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const toast = useToast()
+
+  const [formulario, setFormulario] = useState({
+    titulo: '',
+    descricao: '',
+    prioridade: 'media' as 'baixa' | 'media' | 'alta',
+    dataVencimento: ''
+  })
+
+ /* salva localstorage... */
+  useEffect(() => {
+    const dados = localStorage.getItem('minhas_tarefas')
+    if (dados) {
+      setTarefas(JSON.parse(dados))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem('minhas_tarefas', JSON.stringify(tarefas))
+  }, [tarefas])
+
+   /* açoes... */
+  const abrirModalNovo = () => {
+    setTarefaEditando(null)
+    setFormulario({
+      titulo: '',
+      descricao: '',
+      prioridade: 'media',
+      dataVencimento: ''
+    })
+    onOpen()
+  }
+
+  const abrirModalEditar = (tarefa: Tarefa) => {
+    setTarefaEditando(tarefa)
+    setFormulario({
+      titulo: tarefa.titulo,
+      descricao: tarefa.descricao,
+      prioridade: tarefa.prioridade,
+      dataVencimento: tarefa.dataVencimento || ''
+    })
+    onOpen()
+  }
+
+  const salvarTarefa = () => {
+    if (!formulario.titulo.trim()) {
+      toast({
+        title: 'Erro',
+        description: 'O título é obrigatório',
+        status: 'error',
+        duration: 3000
+      })
+      return
+    }
+
+    if (tarefaEditando) {
+      setTarefas(tarefas.map(t =>
+        t.id === tarefaEditando.id
+          ? { ...t, ...formulario }
+          : t
+      ))
+      toast({ title: 'Tarefa atualizada', status: 'success', duration: 2000 })
+    } else {
+      setTarefas([
+        {
+          id: Date.now().toString(),
+          status: 'pendente',
+          dataCriacao: new Date().toISOString(),
+          ...formulario
+        },
+        ...tarefas
+      ])
+      toast({ title: 'Tarefa criada', status: 'success', duration: 2000 })
+    }
+
+    onClose()
+  }
+
+  const excluirTarefa = (id: string) => {
+    setTarefaParaExcluir(id)
+  }
+
+  const confirmarExclusao = () => {
+    if (!tarefaParaExcluir) return
+
+    setTarefas(tarefas.filter(t => t.id !== tarefaParaExcluir))
+    setTarefaParaExcluir(null)
+
+    toast({
+      title: 'Tarefa excluída',
+      status: 'info',
+      duration: 2000
+    })
+  }
+
+  const alternarStatus = (id: string) => {
+    setTarefas(tarefas.map(t =>
+      t.id === id
+        ? {
+            ...t,
+            status: t.status === 'pendente' ? 'concluida' : 'pendente',
+            dataConclusao:
+              t.status === 'pendente'
+                ? new Date().toISOString()
+                : undefined
+          }
+        : t
+    ))
+  }
+
+ /* filtros... */
+  const tarefasFiltradas = tarefas.filter(t => {
+    const buscaOk =
+      t.titulo.toLowerCase().includes(busca.toLowerCase()) ||
+      t.descricao.toLowerCase().includes(busca.toLowerCase())
+
+    const statusOk = filtroStatus === 'todas' || t.status === filtroStatus
+    const prioridadeOk =
+      filtroPrioridade === 'todas' || t.prioridade === filtroPrioridade
+
+    return buscaOk && statusOk && prioridadeOk
+  })
+
+  const totalPendentes = tarefas.filter(t => t.status === 'pendente').length
+  const totalConcluidas = tarefas.filter(t => t.status === 'concluida').length
+
+  /* renderiza... */
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <Box
+      minH="100vh"
+      py={8}
+      bgGradient="linear(to-br, blue.50, blue.100)"
+    >
+      <Container maxW="container.lg">
+        <VStack spacing={6} align="stretch">
+          <Header
+            total={tarefas.length}
+            pendentes={totalPendentes}
+            concluidas={totalConcluidas}
+          />
+
+          <Filters
+            busca={busca}
+            setBusca={setBusca}
+            filtroStatus={filtroStatus}
+            setFiltroStatus={setFiltroStatus}
+            filtroPrioridade={filtroPrioridade}
+            setFiltroPrioridade={setFiltroPrioridade}
+          />
+
+          <Button
+            colorScheme="blue"
+            size="lg"
+            leftIcon={<AddIcon />}
+            onClick={abrirModalNovo}
+          >
+            Nova Tarefa
+          </Button>
+
+          <TaskList
+            tarefas={tarefasFiltradas}
+            onEditar={abrirModalEditar}
+            onExcluir={excluirTarefa}
+            onAlternarStatus={alternarStatus}
+          />
+        </VStack>
+
+        <TaskModal
+          isOpen={isOpen}
+          onClose={onClose}
+          tarefaEditando={tarefaEditando}
+          formulario={formulario}
+          setFormulario={setFormulario}
+          onSalvar={salvarTarefa}
         />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+
+        <Footer />
+      </Container>
+
+     
+      <AlertDialog
+        isOpen={!!tarefaParaExcluir}
+        leastDestructiveRef={cancelRef}
+        onClose={() => setTarefaParaExcluir(null)}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Excluir tarefa
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Tem certeza que deseja excluir esta tarefa?
+              Essa ação não poderá ser desfeita.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={() => setTarefaParaExcluir(null)}>
+                Cancelar
+              </Button>
+              <Button colorScheme="red" ml={3} onClick={confirmarExclusao}>
+                Excluir
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </Box>
+  )
 }

@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Gerenciador de Tarefas TO DO LIST - IM
 
-## Getting Started
+Projeto desenvolvido como teste técnico, consistindo em uma aplicação web para gerenciamento de tarefas (CRUD), com foco em organização de código, usabilidade e boas práticas em React.
 
-First, run the development server:
+ *Tecnologias Utilizadas
 
-```bash
+Next.js (App Router)
+
+React
+
+Chakra UI
+
+TypeScript
+
+LocalStorage para persistência dos dados
+
+ *Funcionalidades
+
+Criar, editar, excluir e concluir tarefas
+
+Listagem de tarefas
+
+Filtros por status e prioridade
+
+Busca por título ou descrição
+
+Persistência dos dados no navegador
+
+Interface responsiva
+
+Modais e feedback visual com Chakra UI
+
+Instale as dependências do projeto
+npm install
+
+Instale o Chakra UI
+npm install @chakra-ui/react @emotion/react @emotion/styled framer-motion
+
+Instale os ícones do Chakra UI
+npm install @chakra-ui/icons
+
+Execute o projeto
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse no navegador
+http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Estilização
 
-## Learn More
+A estilização foi feita utilizando Chakra UI, diretamente nos componentes, sem uso de arquivos CSS separados, garantindo consistência visual, responsividade e facilidade de manutenção.
 
-To learn more about Next.js, take a look at the following resources:
+Observações
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Os dados são armazenados localmente utilizando localStorage
+O foco foi entregar uma solução funcional, organizada e de fácil entendimento
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Desenvolvido por: Victor Lara Silva
+Ano: 2025
